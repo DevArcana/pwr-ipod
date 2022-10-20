@@ -16,6 +16,7 @@
     "vite-plugin-solid-styled": "^0.7.3"
   },
   "dependencies": {
+    "open-props": "^1.4.16",
     "solid-js": "^1.5.1",
     "solid-styled": "^0.7.3"
   }
