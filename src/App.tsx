@@ -1,4 +1,5 @@
 import type { Component } from 'solid-js';
+import {Parser} from 'acorn';
 
 import styles from './App.module.css'
 import { createEffect, createSignal } from "solid-js";
@@ -8,7 +9,7 @@ const App: Component = () => {
   const [getOutput, setOutput] = createSignal("");
 
   const transform = (input: string) => {
-    return input;
+    return JSON.stringify(Parser.parse(input, {ecmaVersion: 2020}))
   }
 
   createEffect(() => {
