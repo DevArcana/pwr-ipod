@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "acorn": "^8.8.0",
+    "acorn-walk": "^8.2.0",
     "astring": "^1.8.3",
     "solid-js": "^1.5.1"
   }
