@@ -4,6 +4,9 @@ import { Parser } from "acorn";
 
 import styles from "./App.module.css";
 import { generate } from "astring";
+import { inputTransformIdentity } from "./transformers/input/identity";
+import { astTransformIdentity } from "./transformers/ast/identity";
+import { outputTransformIdentity } from "./transformers/output/identity";
 
 const initialProgram = `
 const a = 1
@@ -23,7 +26,7 @@ const App: Component = () => {
   const [ getDisplayAst, setDisplayAst ] = createSignal(false);
 
   createEffect(() => {
-    const input = getInput();
+    const input = inputTransformIdentity(getInput());
 
     try {
       const ast = Parser.parse(getInput(), { ecmaVersion: 2020 });
@@ -37,8 +40,8 @@ const App: Component = () => {
   });
 
   createEffect(() => {
-    const ast = getAst();
-    const output = generate(ast);
+    const ast = astTransformIdentity(getAst());
+    const output = outputTransformIdentity(generate(ast));
     setOutput(output);
   });
 
