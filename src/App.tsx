@@ -5,10 +5,17 @@ import { Parser } from "acorn";
 import styles from "./App.module.css";
 import { generate } from "astring";
 
+const initialProgram = `
+const a = 1
+let b = 2
+const c = a + b * 2
+console.log(c)
+`.trim()
+
 const App: Component = () => {
   const options = { ecmaVersion: 2020 };
 
-  const [ getInput, setInput ] = createSignal("");
+  const [ getInput, setInput ] = createSignal(initialProgram);
   const [ getAst, setAst ] = createSignal(Parser.parse(getInput(), { ecmaVersion: 2020 }));
   const [ getOutput, setOutput ] = createSignal("");
   const [ getException, setException ] = createSignal<string>();

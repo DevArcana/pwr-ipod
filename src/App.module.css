@@ -15,7 +15,7 @@
 }
 
 .textarea {
-
+  resize: none;
 }
 
 .textarea:read-only {
