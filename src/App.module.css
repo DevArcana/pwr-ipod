@@ -1,7 +1,19 @@
 .main {
+  display: grid;
 
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr;
+
+  gap: 8px;
+  padding: 8px;
+
+  height: calc(100% - 16px);
 }
 
 .textarea {
 
+}
+
+.textarea:read-only {
+  background-color: whitesmoke;
 }
