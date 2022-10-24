@@ -2,6 +2,7 @@ lockfileVersion: 5.4
 
 specifiers:
   acorn: ^8.8.0
+  astring: ^1.8.3
   solid-js: ^1.5.1
   typescript: ^4.8.2
   vite: ^3.0.9
@@ -9,6 +10,7 @@ specifiers:
 
 dependencies:
   acorn: 8.8.0
+  astring: 1.8.3
   solid-js: 1.5.1
 
 devDependencies:
@@ -384,6 +386,11 @@ packages:
     dependencies:
       color-convert: 1.9.3
     dev: true
+
+  /astring/1.8.3:
+    resolution: {integrity: sha512-sRpyiNrx2dEYIMmUXprS8nlpRg2Drs8m9ElX9vVEXaCB4XEAJhKfs7IcX0IwShjuOAjLR6wzIrgoptz1n19i1A==}
+    hasBin: true
+    dev: false
 
   /babel-plugin-jsx-dom-expressions/0.33.12_@babel+core@7.18.6:
     resolution: {integrity: sha512-FQeNcBvC+PrPYGpeUztI7AiiAqJL2H8e7mL4L6qHZ7B4wZfbgyREsHZwKmmDqxAehlyAUolTdhDNk9xfyHdIZw==}
