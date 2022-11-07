@@ -1,11 +1,12 @@
+import { Parser } from "acorn";
 import type { Component } from "solid-js";
 import { batch, createEffect, createSignal } from "solid-js";
-import { Parser } from "acorn";
 
-import styles from "./App.module.css";
 import { generate } from "astring";
-import { inputTransformIdentity } from "./transformers/input/identity";
+import styles from "./App.module.css";
 import { astTransformIdentity } from "./transformers/ast/identity";
+import { astTransformVariableMangle } from "./transformers/ast/variableMangle";
+import { inputTransformIdentity } from "./transformers/input/identity";
 import { outputTransformIdentity } from "./transformers/output/identity";
 
 const initialProgram = `
@@ -13,17 +14,19 @@ const a = 1
 let b = 2
 const c = a + b * 2
 console.log(c)
-`.trim()
+`.trim();
 
 const App: Component = () => {
   const options = { ecmaVersion: 2020 };
 
-  const [ getInput, setInput ] = createSignal(initialProgram);
-  const [ getAst, setAst ] = createSignal(Parser.parse(getInput(), { ecmaVersion: 2020 }));
-  const [ getOutput, setOutput ] = createSignal("");
-  const [ getException, setException ] = createSignal<string>();
+  const [getInput, setInput] = createSignal(initialProgram);
+  const [getAst, setAst] = createSignal(
+    Parser.parse(getInput(), { ecmaVersion: 2020 })
+  );
+  const [getOutput, setOutput] = createSignal("");
+  const [getException, setException] = createSignal<string>();
 
-  const [ getDisplayAst, setDisplayAst ] = createSignal(false);
+  const [getDisplayAst, setDisplayAst] = createSignal(false);
 
   createEffect(() => {
     const input = inputTransformIdentity(getInput());
@@ -40,15 +43,14 @@ const App: Component = () => {
   });
 
   createEffect(() => {
-    const ast = astTransformIdentity(getAst());
+    const ast = astTransformVariableMangle(astTransformIdentity(getAst()));
     const output = outputTransformIdentity(generate(ast));
     setOutput(output);
   });
 
   const resolveOutput = () => {
     const exception = getException();
-    if (exception)
-      return exception;
+    if (exception) return exception;
 
     const output = getDisplayAst() ? JSON.stringify(getAst()) : getOutput();
     return output;
@@ -67,11 +69,16 @@ const App: Component = () => {
   return (
     <main class={styles.main}>
       <nav class={styles.nav}>
-        <input type="checkbox" name="displayAst" checked={getDisplayAst()} onClick={onAstDisplayInput}/>
+        <input
+          type="checkbox"
+          name="displayAst"
+          checked={getDisplayAst()}
+          onClick={onAstDisplayInput}
+        />
         <label for="displayAst">display AST</label>
       </nav>
-      <textarea class={styles.textarea} onInput={onInput} value={getInput()}/>
-      <textarea class={styles.textarea} readOnly value={resolveOutput()}/>
+      <textarea class={styles.textarea} onInput={onInput} value={getInput()} />
+      <textarea class={styles.textarea} readOnly value={resolveOutput()} />
     </main>
   );
 };

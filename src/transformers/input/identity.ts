@@ -1,3 +1,3 @@
-export function inputTransformIdentity (data: string) {
-  return data
+export function inputTransformIdentity(data: string) {
+  return data;
 }
