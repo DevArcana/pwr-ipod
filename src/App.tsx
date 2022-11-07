@@ -1,20 +1,21 @@
-import React, { useEffect, useState } from "react";
 import CodeMirror from '@uiw/react-codemirror';
+import React, { useEffect, useState } from "react";
 // @ts-ignore
 import { javascript } from "@codemirror/lang-javascript";
-import "./App.css";
 import { Parser } from "acorn";
 import { generate } from "astring";
+import "./App.css";
 import { useRete } from "./rete";
+import { astTransformVariableMangle } from "./transformers/ast/variableMangle";
 
 function App() {
   const options = { ecmaVersion: 2020 };
-  const [ input, setInput ] = useState("");
-  const [ ast, setAst ] = useState(Parser.parse("", { ecmaVersion: 2020 }));
-  const [ output, setOutput ] = useState("");
-  const [ exception, setException ] = useState<string>();
-  const [ displayAst, setDisplayAst ] = useState(false);
-  const [ resolved, setResolved ] = useState("");
+  const [input, setInput] = useState("");
+  const [ast, setAst] = useState(Parser.parse("", { ecmaVersion: 2020 }));
+  const [output, setOutput] = useState("");
+  const [exception, setException] = useState<string>();
+  const [displayAst, setDisplayAst] = useState(false);
+  const [resolved, setResolved] = useState("");
 
   const [setContainer] = useRete();
 
@@ -31,19 +32,18 @@ function App() {
   }, [input]);
 
   useEffect(() => {
-    const transformedAst = ast;
+    const transformedAst = astTransformVariableMangle(ast);
     const transformedOutput = generate(transformedAst);
     setOutput(transformedOutput);
   }, [ast]);
 
   useEffect(() => {
     if (exception) {
-      setResolved(exception)
+      setResolved(exception);
+    } else {
+      setResolved(displayAst ? JSON.stringify(ast) : output);
     }
-    else {
-      setResolved(displayAst ? JSON.stringify(ast) : output)
-    }
-  }, [output, exception, displayAst])
+  }, [output, exception, displayAst]);
 
   const onChange = React.useCallback((value: string, viewUpdate: any) => {
     setInput(value);
@@ -51,12 +51,17 @@ function App() {
 
   const onDisplayAstChange = () => {
     setDisplayAst(!displayAst);
-  }
+  };
 
   return (
     <main className="main">
       <nav className="nav">
-        <input type="checkbox" name="displayAst" checked={displayAst} onClick={onDisplayAstChange}/>
+        <input
+          type="checkbox"
+          name="displayAst"
+          checked={displayAst}
+          onClick={onDisplayAstChange}
+        />
         <label htmlFor="displayAst">display AST</label>
       </nav>
       <CodeMirror
@@ -74,7 +79,10 @@ function App() {
         height="100%"
         width="100%"
         extensions={[javascript({ jsx: false })]}
-        basicSetup={{highlightActiveLine: false, highlightActiveLineGutter: false}}
+        basicSetup={{
+          highlightActiveLine: false,
+          highlightActiveLineGutter: false,
+        }}
       />
       <div
         className="editor"
