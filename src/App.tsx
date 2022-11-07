@@ -1,10 +1,11 @@
-import React, { ChangeEvent, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import CodeMirror from '@uiw/react-codemirror';
 // @ts-ignore
 import { javascript } from "@codemirror/lang-javascript";
 import "./App.css";
 import { Parser } from "acorn";
 import { generate } from "astring";
+import { useRete } from "./rete";
 
 function App() {
   const options = { ecmaVersion: 2020 };
@@ -14,6 +15,8 @@ function App() {
   const [ exception, setException ] = useState<string>();
   const [ displayAst, setDisplayAst ] = useState(false);
   const [ resolved, setResolved ] = useState("");
+
+  const [setContainer] = useRete();
 
   useEffect(() => {
     const transformed = input;
@@ -72,6 +75,14 @@ function App() {
         width="100%"
         extensions={[javascript({ jsx: false })]}
         basicSetup={{highlightActiveLine: false, highlightActiveLineGutter: false}}
+      />
+      <div
+        className="editor"
+        style={{
+          width: "100vw",
+          height: "100vh"
+        }}
+        ref={(ref) => ref && setContainer(ref as any)}
       />
     </main>
   );

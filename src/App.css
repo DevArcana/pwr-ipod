@@ -2,7 +2,7 @@
   display: grid;
 
   grid-template-columns: 1fr 1fr;
-  grid-template-rows: auto 1fr;
+  grid-template-rows: auto 1fr auto;
 
   gap: 8px;
   padding: 8px;
@@ -12,6 +12,11 @@
 
 .nav {
   grid-column-end: span 2;
+}
+
+.editor {
+  grid-column-end: span 2 !important;
+  height: 300px !important;
 }
 
 .textarea {
