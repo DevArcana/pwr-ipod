@@ -13,23 +13,37 @@ export function astTransformVariableMangle(data: acorn.Node): acorn.Node {
 
 function mangleVariableNames(data: acorn.Node) {
   const mangler = new UnicodeMangler();
-  const varsLookup: { [key: string]: string } = {};
+  const varsLookup: { [key: string]: string[] } = {};
 
   full(data, (node: acorn.Node) => {
     if (node.type === "VariableDeclarator") {
       const generated = mangler.next();
 
       // @ts-ignore
-      varsLookup[node.id.name] = generated;
+      if (varsLookup[node.id.name] === undefined) {
+        // @ts-ignore
+        varsLookup[node.id.name] = [];
+      }
+
+      // @ts-ignore
+      varsLookup[node.id.name].unshift(generated);
 
       // @ts-ignore
       node.id.name = generated;
     }
+  });
 
+  full(data, (node: acorn.Node) => {
     // @ts-ignore
     if (node.type === "Identifier" && node.name in varsLookup) {
       // @ts-ignore
-      node.name = varsLookup[node.name];
+      if (varsLookup[node.name].length > 1) {
+        // @ts-ignore
+        node.name = varsLookup[node.name].pop();
+      } else {
+        // @ts-ignore
+        node.name = varsLookup[node.name][0];
+      }
     }
   });
 

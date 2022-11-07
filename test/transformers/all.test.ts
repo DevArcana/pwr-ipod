@@ -12,6 +12,17 @@ test("variableMangle", () => {
 
   const astMangled = astTransformVariableMangle(astTransformIdentity(ast));
   const output = outputTransformIdentity(generate(astMangled));
+  assert.equal(eval(contents), eval(output));
+});
+
+test("variableMangleBug", () => {
+  const contents = readFileSync(
+    "test/fixtures/variableMangleBug.js"
+  ).toString();
+  const ast = Parser.parse(contents, { ecmaVersion: 2020 });
+
+  const astMangled = astTransformVariableMangle(astTransformIdentity(ast));
+  const output = outputTransformIdentity(generate(astMangled));
   console.log(output);
   assert.equal(eval(contents), eval(output));
 });
