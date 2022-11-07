@@ -9,8 +9,6 @@ export function astTransformVariableMangle(data: acorn.Node): acorn.Node {
   return data;
 }
 
-// TODO error (changing scope of variables, should handle it differently)
-
 function mangleVariableNames(data: acorn.Node) {
   const mangler = new UnicodeMangler();
   const varsLookup: { [key: string]: string[] } = {};
@@ -33,17 +31,34 @@ function mangleVariableNames(data: acorn.Node) {
     }
   });
 
-  full(data, (node: acorn.Node) => {
-    // @ts-ignore
-    if (node.type === "Identifier" && node.name in varsLookup) {
+  fullAncestor(data, (node: acorn.Node, ancestors: acorn.Node[]) => {
+    if (
+      ancestors.length !== 1 &&
+      // do not replace arrow function arguments
+      ancestors[ancestors.length - 2].type !== "ArrowFunctionExpression" &&
+      // do not replace object deconstruction
+      ancestors[ancestors.length - 2].type !== "ObjectPattern"
+    ) {
       // @ts-ignore
-      if (varsLookup[node.name].length > 1) {
+      if (node.type === "Identifier" && node.name in varsLookup) {
         // @ts-ignore
-        node.name = varsLookup[node.name].pop();
-      } else {
-        // @ts-ignore
-        node.name = varsLookup[node.name][0];
+        if (varsLookup[node.name].length > 1) {
+          // @ts-ignore
+          node.name = varsLookup[node.name].pop();
+        } else {
+          // @ts-ignore
+          node.name = varsLookup[node.name][0];
+        }
       }
+    }
+
+    if (
+      ancestors.length !== 1 &&
+      ancestors[ancestors.length - 2].type === "ObjectExpression" &&
+      node.type === "Property"
+    ) {
+      // @ts-ignore
+      node.shorthand = false;
     }
   });
 
@@ -52,9 +67,24 @@ function mangleVariableNames(data: acorn.Node) {
 
 function removeVariableDeclarationIdentifiers(data: acorn.Node) {
   fullAncestor(data, (node: acorn.Node, ancestors: acorn.Node[]) => {
-    if (node.type === "VariableDeclaration") {
-      //@ts-ignore
-      node.kind = "";
+    if (
+      ancestors.length > 1 &&
+      ancestors[ancestors.length - 2].type !== "property"
+    ) {
+      if (node.type === "VariableDeclaration") {
+        // exclude 'const {a} = params' case
+        //@ts-ignore
+        if (
+          //@ts-ignore
+          node.declarations.filter(
+            //@ts-ignore
+            (declaration: acorn.Node) => declaration.id.type === "ObjectPattern"
+          ).length === 0
+        ) {
+          //@ts-ignore
+          node.kind = "";
+        }
+      }
     }
   });
 
