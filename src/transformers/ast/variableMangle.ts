@@ -1,5 +1,4 @@
 import { full, fullAncestor } from "acorn-walk";
-import random from "random";
 
 export function astTransformVariableMangle(data: acorn.Node): acorn.Node {
   data = removeVariableDeclarationIdentifiers(data);
@@ -108,12 +107,15 @@ function insertVarsDeclaration(data: any) {
 
 // TODO find library that actually delivers seedable rng
 class UnicodeMangler {
-  private rng = random.clone("asdf");
   private generated: string[] = [];
   constructor() {}
 
+  private getRandomArbitrary(min: number, max: number) {
+    return Math.random() * (max - min) + min;
+  }
+
   next(): string {
-    const hex = this.rng.int(4096, 100000000);
+    const hex = this.getRandomArbitrary(4096, 100000000);
 
     let gen = `${hex.toString(16)}`;
     while (this.generated.includes(gen)) {
