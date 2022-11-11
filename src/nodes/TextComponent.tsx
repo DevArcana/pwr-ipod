@@ -18,6 +18,6 @@ export class TextComponent extends Rete.Component {
 
   // @ts-ignore
   worker(node: Node, inputs: WorkerInputs, outputs: WorkerOutputs) {
-    outputs["text"] = node.data.num;
+    outputs["text"] = node.data.text;
   }
 }

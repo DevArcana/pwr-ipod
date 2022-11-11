@@ -7,63 +7,34 @@ import { generate } from "astring";
 import "./App.css";
 import { useRete } from "./rete";
 import { astTransformVariableMangle } from "./transformers/ast/variableMangle";
+import { useEditorInput } from "./global/useEditorInput";
+import { useEditorOutput } from "./global/useEditorOutput";
 
 function App() {
-  const options = { ecmaVersion: 2020 };
-  const [input, setInput] = useState("");
-  const [ast, setAst] = useState(Parser.parse("", { ecmaVersion: 2020 }));
-  const [output, setOutput] = useState("");
-  const [exception, setException] = useState<string>();
-  const [displayAst, setDisplayAst] = useState(false);
-  const [resolved, setResolved] = useState("");
-
   const [setContainer] = useRete();
 
-  useEffect(() => {
-    const transformed = input;
+  const {setEditorInput, onEditorInputChange} = useEditorInput();
+  const {onEditorOutputChange} = useEditorOutput();
 
-    try {
-      const ast = Parser.parse(transformed, { ecmaVersion: 2020 });
-      setAst(ast);
-      setException(undefined);
-    } catch (e) {
-      setException(JSON.stringify(e));
-    }
-  }, [input]);
+  const [input, setInput] = useState("");
+  const [output, setOutput] = useState("");
 
   useEffect(() => {
-    const transformedAst = astTransformVariableMangle(ast);
-    const transformedOutput = generate(transformedAst);
-    setOutput(transformedOutput);
-  }, [ast]);
+    onEditorInputChange((editorInput) => {
+      setInput(editorInput);
+    })
 
-  useEffect(() => {
-    if (exception) {
-      setResolved(exception);
-    } else {
-      setResolved(displayAst ? JSON.stringify(ast) : output);
-    }
-  }, [output, exception, displayAst]);
+    onEditorOutputChange((editorOutput) => {
+      setOutput(editorOutput);
+    })
+  }, [])
 
-  const onChange = React.useCallback((value: string, viewUpdate: any) => {
-    setInput(value);
+  const onChange = React.useCallback((value: string) => {
+    setEditorInput(value);
   }, []);
-
-  const onDisplayAstChange = () => {
-    setDisplayAst(!displayAst);
-  };
 
   return (
     <main className="main">
-      <nav className="nav">
-        <input
-          type="checkbox"
-          name="displayAst"
-          checked={displayAst}
-          onClick={onDisplayAstChange}
-        />
-        <label htmlFor="displayAst">display AST</label>
-      </nav>
       <CodeMirror
         className="textarea"
         value={input}
@@ -75,7 +46,7 @@ function App() {
       <CodeMirror
         className="textarea"
         editable={false}
-        value={resolved}
+        value={output}
         height="100%"
         width="100%"
         extensions={[javascript({ jsx: false })]}

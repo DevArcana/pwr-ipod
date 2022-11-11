@@ -9,9 +9,25 @@ import Context from "efficy-rete-context-menu-plugin";
 import {NumComponent} from "./nodes/NumComponent";
 import {TextComponent} from "./nodes/TextComponent";
 import {AddComponent} from "./nodes/AddComponent";
+import {EditorInputComponent} from "./nodes/EditorInputComponent";
+import {EditorOutputComponent} from "./nodes/EditorOutputComponent";
+import {ParserComponent} from "./nodes/ParserComponent";
+import {EmitterComponent} from "./nodes/EmitterComponent";
+import {JsonStringifyComponent} from "./nodes/JsonStringifyComponent";
+import {TextFallbackComponent} from "./nodes/TextFallbackComponent";
 
 export async function createEditor(container) {
-    const components = [new NumComponent(), new AddComponent(), new TextComponent()];
+    const components = [
+        new EditorInputComponent(),   // 0
+        new EditorOutputComponent(),  // 1
+        new ParserComponent(),        // 2
+        new EmitterComponent(),       // 3
+        new JsonStringifyComponent(), // 4
+        new TextFallbackComponent(),  // 5
+        new NumComponent(),
+        new AddComponent(),
+        new TextComponent(),
+    ];
 
     const editor = new Rete.NodeEditor("demo@0.1.0", container);
     editor.use(ConnectionPlugin);
@@ -25,20 +41,37 @@ export async function createEditor(container) {
         engine.register(c);
     });
 
-    const n1 = await components[0].createNode({num: 2});
-    const n2 = await components[0].createNode({num: 3});
-    const add = await components[1].createNode();
+    const input = await components[0].createNode();
+    const parser = await components[2].createNode();
+    const emitter = await components[3].createNode();
+    const output = await components[1].createNode();
+    const stringifyException = await components[4].createNode();
+    const stringifyAst = await components[4].createNode();
+    const fallback = await components[5].createNode();
 
-    n1.position = [80, 200];
-    n2.position = [80, 400];
-    add.position = [500, 240];
+    input.position = [0, 0];
+    parser.position = [250, 0];
+    emitter.position = [500, 0];
+    stringifyException.position = [500, 150];
+    stringifyAst.position = [500, -150];
+    fallback.position = [750, 0];
+    output.position = [1000, 0];
 
-    editor.addNode(n1);
-    editor.addNode(n2);
-    editor.addNode(add);
+    editor.addNode(input);
+    editor.addNode(parser);
+    editor.addNode(emitter);
+    editor.addNode(stringifyException);
+    editor.addNode(stringifyAst);
+    editor.addNode(fallback);
+    editor.addNode(output);
 
-    editor.connect(n1.outputs.get("num"), add.inputs.get("num1"));
-    editor.connect(n2.outputs.get("num"), add.inputs.get("num2"));
+    editor.connect(input.outputs.get("text"), parser.inputs.get("text"));
+    editor.connect(parser.outputs.get("ast"), emitter.inputs.get("ast"));
+    editor.connect(parser.outputs.get("ast"), stringifyAst.inputs.get("anything"));
+    editor.connect(parser.outputs.get("exception"), stringifyException.inputs.get("anything"));
+    editor.connect(emitter.outputs.get("text"), fallback.inputs.get("text1"));
+    editor.connect(stringifyException.outputs.get("text"), fallback.inputs.get("text2"));
+    editor.connect(fallback.outputs.get("text"), output.inputs.get("text"));
 
     editor.on(
         "process nodecreated noderemoved connectioncreated connectionremoved",
