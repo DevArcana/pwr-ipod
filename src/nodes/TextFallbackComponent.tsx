@@ -1,8 +1,8 @@
-import Rete from "rete";
-import { textSocket } from "../sockets";
-import { WorkerInputs, WorkerOutputs } from "rete/types/core/data";
 import { Node } from "astring";
+import Rete from "rete";
+import { WorkerInputs, WorkerOutputs } from "rete/types/core/data";
 import { TextControl } from "../controls/TextControl";
+import { textSocket } from "../sockets";
 
 export class TextFallbackComponent extends Rete.Component {
   constructor() {
@@ -11,8 +11,8 @@ export class TextFallbackComponent extends Rete.Component {
 
   // @ts-ignore
   builder(node: Rete.Node) {
-    const in1 = new Rete.Input("text1", "Text 1", textSocket);
-    const in2 = new Rete.Input("text2", "Text 2", textSocket);
+    const in1 = new Rete.Input("text1", "Result", textSocket);
+    const in2 = new Rete.Input("text2", "Error", textSocket);
     const out1 = new Rete.Output("text", "Text", textSocket);
 
     in1.addControl(new TextControl(this.editor, "text1", node));

@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import Rete from "rete";
 import {createRoot} from "react-dom/client";
 import ReactRenderPlugin from "rete-react-render-plugin";
@@ -12,21 +12,23 @@ import {AddComponent} from "./nodes/AddComponent";
 import {EditorInputComponent} from "./nodes/EditorInputComponent";
 import {EditorOutputComponent} from "./nodes/EditorOutputComponent";
 import {ParserComponent} from "./nodes/ParserComponent";
-import {EmitterComponent} from "./nodes/EmitterComponent";
+import {CodeGenerator} from "./nodes/EmitterComponent";
 import {JsonStringifyComponent} from "./nodes/JsonStringifyComponent";
 import {TextFallbackComponent} from "./nodes/TextFallbackComponent";
+import { HexStringMangler } from "./nodes/transformers/ast/HexStringMangler";
 
 export async function createEditor(container) {
     const components = [
         new EditorInputComponent(),   // 0
         new EditorOutputComponent(),  // 1
         new ParserComponent(),        // 2
-        new EmitterComponent(),       // 3
+        new CodeGenerator(),       // 3
         new JsonStringifyComponent(), // 4
         new TextFallbackComponent(),  // 5
         new NumComponent(),
         new AddComponent(),
         new TextComponent(),
+        new HexStringMangler(),
     ];
 
     const editor = new Rete.NodeEditor("demo@0.1.0", container);
@@ -36,7 +38,7 @@ export async function createEditor(container) {
 
     const engine = new Rete.Engine("demo@0.1.0");
 
-    components.map((c) => {
+    components.forEach((c) => {
         editor.register(c);
         engine.register(c);
     });
@@ -48,25 +50,29 @@ export async function createEditor(container) {
     const stringifyException = await components[4].createNode();
     const stringifyAst = await components[4].createNode();
     const fallback = await components[5].createNode();
+    const hexStringMangler = await components[9].createNode();
 
     input.position = [0, 0];
     parser.position = [250, 0];
-    emitter.position = [500, 0];
+    hexStringMangler.position = [500, 0];
     stringifyException.position = [500, 150];
     stringifyAst.position = [500, -150];
-    fallback.position = [750, 0];
-    output.position = [1000, 0];
+    emitter.position = [750, 0];
+    fallback.position = [1000, 0];
+    output.position = [1250, 0];
 
     editor.addNode(input);
     editor.addNode(parser);
     editor.addNode(emitter);
     editor.addNode(stringifyException);
     editor.addNode(stringifyAst);
+    editor.addNode(hexStringMangler);
     editor.addNode(fallback);
     editor.addNode(output);
 
     editor.connect(input.outputs.get("text"), parser.inputs.get("text"));
-    editor.connect(parser.outputs.get("ast"), emitter.inputs.get("ast"));
+    editor.connect(parser.outputs.get("ast"), hexStringMangler.inputs.get("ast"));
+    editor.connect(hexStringMangler.outputs.get("ast"), emitter.inputs.get("ast"));
     editor.connect(parser.outputs.get("ast"), stringifyAst.inputs.get("anything"));
     editor.connect(parser.outputs.get("exception"), stringifyException.inputs.get("anything"));
     editor.connect(emitter.outputs.get("text"), fallback.inputs.get("text1"));

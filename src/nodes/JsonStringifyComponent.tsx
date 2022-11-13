@@ -1,7 +1,7 @@
+import { Node } from "astring";
 import Rete from "rete";
-import { anythingSocket, astSocket, textSocket } from "../sockets";
 import { WorkerInputs, WorkerOutputs } from "rete/types/core/data";
-import {generate, Node} from "astring";
+import { anythingSocket, textSocket } from "../sockets";
 
 export class JsonStringifyComponent extends Rete.Component {
   constructor() {
@@ -21,7 +21,7 @@ export class JsonStringifyComponent extends Rete.Component {
     const input = inputs.anything[0];
 
     if (input) {
-      outputs["text"] = JSON.stringify(input)
+      outputs["text"] = JSON.stringify(input, null, 2);
     }
   }
 }

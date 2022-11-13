@@ -1,17 +1,16 @@
 import Rete from "rete";
-import { numSocket } from "../sockets";
 import { NumControl } from "../controls/NumControl";
-import React from "react";
+import { numSocket } from "../sockets";
 // @ts-ignore
 import { Control, Node, Socket } from "rete-react-render-plugin";
 
 class Component extends Node {
   private props: any;
   private state!: {
-    outputs: any[]
-    controls: any[]
-    inputs: any[]
-    selected: boolean
+    outputs: any[];
+    controls: any[];
+    inputs: any[];
+    selected: boolean;
   };
 
   render() {
@@ -20,9 +19,7 @@ class Component extends Node {
 
     return (
       <div className={`node ${selected}`}>
-        <div className="title">
-          {node.name}
-        </div>
+        <div className="title">{node.name}</div>
         {/* Outputs */}
         {outputs.map((output) => (
           <div className="output" key={output.key}>
@@ -103,7 +100,7 @@ export class AddComponent extends Rete.Component {
     const editor = this.editor!;
 
     const preview = editor.nodes
-      .find((n) => n.id == node.id)!
+      .find((n) => n.id === node.id)!
       .controls.get("preview")!;
 
     // @ts-ignore

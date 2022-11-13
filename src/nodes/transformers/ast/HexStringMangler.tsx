@@ -1,17 +1,18 @@
-import { generate, Node } from "astring";
+import { Node } from "astring";
 import Rete from "rete";
 import { WorkerInputs, WorkerOutputs } from "rete/types/core/data";
-import { astSocket, textSocket } from "../sockets";
+import { astSocket } from "../../../sockets";
+import { astTransformHexString } from "../../../transformers/ast/hexString";
 
-export class CodeGenerator extends Rete.Component {
+export class HexStringMangler extends Rete.Component {
   constructor() {
-    super("Code generator");
+    super("Hex string mangler");
   }
 
   // @ts-ignore
   builder(node: Rete.Node) {
     const in1 = new Rete.Input("ast", "AST", astSocket);
-    const out1 = new Rete.Output("text", "Text", textSocket);
+    const out1 = new Rete.Output("ast", "AST", astSocket);
 
     return node.addInput(in1).addOutput(out1);
   }
@@ -21,7 +22,7 @@ export class CodeGenerator extends Rete.Component {
     const input = inputs.ast[0];
 
     if (input) {
-      outputs["text"] = generate(input as Node);
+      outputs["ast"] = astTransformHexString(input as acorn.Node);
     }
   }
 }
