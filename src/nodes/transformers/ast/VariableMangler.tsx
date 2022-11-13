@@ -1,8 +1,8 @@
 import { Node } from "acorn";
 import { astTransformVariableMangle } from "../../../transformers/ast/variableMangle";
-import { AbstractAstMangler } from "./AbstractAstMangler";
+import { AbstractAstComponent } from "./AbstractAstComponent";
 
-export class VariableMangler extends AbstractAstMangler {
+export class VariableMangler extends AbstractAstComponent {
   constructor() {
     super("Variable mangler");
   }

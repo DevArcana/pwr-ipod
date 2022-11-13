@@ -1,9 +1,9 @@
 import { Parser } from "acorn";
 import { generate } from "astring";
 import { readFileSync } from "fs";
-import { astTransformIdentity } from "../../transformers/ast/identity";
-import { astTransformVariableMangle } from "../../transformers/ast/variableMangle";
-import { outputTransformIdentity } from "../../transformers/output/identity";
+import { astTransformIdentity } from "../../../transformers/ast/identity";
+import { astTransformVariableMangle } from "../../../transformers/ast/variableMangle";
+import { outputTransformIdentity } from "../../../transformers/text/identity";
 
 const basePath = "src/test/fixtures/samples";
 

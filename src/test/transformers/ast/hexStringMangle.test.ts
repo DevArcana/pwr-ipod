@@ -1,7 +1,7 @@
 import { Parser } from "acorn";
 import { generate } from "astring";
 import { readdirSync, readFileSync } from "fs";
-import { astTransformHexString } from "../../transformers/ast/hexString";
+import { astTransformHexString } from "../../../transformers/ast/hexString";
 
 const dir = "src/test/fixtures/samples/";
 

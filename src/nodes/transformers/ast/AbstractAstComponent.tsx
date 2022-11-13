@@ -4,11 +4,8 @@ import Rete from "rete";
 import { WorkerInputs, WorkerOutputs } from "rete/types/core/data";
 import { astSocket } from "../../../sockets";
 
-export abstract class AbstractAstMangler extends Rete.Component {
-  constructor(name: string) {
-    super(name);
-  }
-
+// @ts-ignore
+export abstract class AbstractAstComponent extends Rete.Component {
   // @ts-ignore
   builder(node: Rete.Node) {
     const in1 = new Rete.Input("ast", "AST", astSocket);

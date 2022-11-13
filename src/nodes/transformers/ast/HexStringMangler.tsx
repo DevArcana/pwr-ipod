@@ -1,8 +1,8 @@
 import { Node } from "acorn";
 import { astTransformHexString } from "../../../transformers/ast/hexString";
-import { AbstractAstMangler } from "./AbstractAstMangler";
+import { AbstractAstComponent } from "./AbstractAstComponent";
 
-export class HexStringMangler extends AbstractAstMangler {
+export class HexStringMangler extends AbstractAstComponent {
   constructor() {
     super("Hex string mangler");
   }

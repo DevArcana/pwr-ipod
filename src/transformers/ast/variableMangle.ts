@@ -9,12 +9,11 @@ export function astTransformVariableMangle(data: acorn.Node): acorn.Node {
 }
 
 function mangleVariableNames(data: acorn.Node) {
-  const mangler = new RandomStringGenerator();
   const varsLookup: { [key: string]: string[] } = {};
 
   full(data, (node: acorn.Node) => {
     if (node.type === "VariableDeclarator") {
-      const generated = mangler.next();
+      const generated = RandomStringGenerator.next();
 
       // @ts-ignore
       if (varsLookup[node.id.name] === undefined) {
@@ -107,10 +106,8 @@ function insertVarsDeclaration(data: any) {
 
 // TODO find library that actually delivers seedable rng
 class RandomStringGenerator {
-  constructor() {}
-
   // https://stackoverflow.com/a/1349426
-  private makeid(length: number) {
+  private static makeid(length: number) {
     var result = "";
     var characters =
       "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -121,7 +118,7 @@ class RandomStringGenerator {
     return result;
   }
 
-  next(): string {
+  static next(): string {
     const gen = this.makeid(12);
     return `vars["${gen}"]`;
   }

@@ -15,7 +15,10 @@ function isLiteral(node: acorn.Node): boolean {
 }
 
 function isStringLiteral(node: acornTypes.NodeLiteral): boolean {
-  return node.raw[0] === '"' && node.raw[node.raw.length - 1] === '"';
+  return (
+    (node.raw[0] === '"' && node.raw[node.raw.length - 1] === '"') ||
+    (node.raw[0] === "'" && node.raw[node.raw.length - 1] === "'")
+  );
 }
 
 function transform(node: acornTypes.NodeLiteral): acorn.Node {
