@@ -9,7 +9,7 @@ export function astTransformVariableMangle(data: acorn.Node): acorn.Node {
 }
 
 function mangleVariableNames(data: acorn.Node) {
-  const mangler = new UnicodeMangler();
+  const mangler = new RandomStringGenerator();
   const varsLookup: { [key: string]: string[] } = {};
 
   full(data, (node: acorn.Node) => {
@@ -106,22 +106,23 @@ function insertVarsDeclaration(data: any) {
 }
 
 // TODO find library that actually delivers seedable rng
-class UnicodeMangler {
-  private generated: string[] = [];
+class RandomStringGenerator {
   constructor() {}
 
-  private getRandomArbitrary(min: number, max: number) {
-    return Math.random() * (max - min) + min;
+  // https://stackoverflow.com/a/1349426
+  private makeid(length: number) {
+    var result = "";
+    var characters =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    var charactersLength = characters.length;
+    for (var i = 0; i < length; i++) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
   }
 
   next(): string {
-    const hex = this.getRandomArbitrary(4096, 100000000);
-
-    let gen = `${hex.toString(16)}`;
-    while (this.generated.includes(gen)) {
-      gen += `${hex.toString(16)}`;
-    }
-
+    const gen = this.makeid(12);
     return `vars["${gen}"]`;
   }
 }
