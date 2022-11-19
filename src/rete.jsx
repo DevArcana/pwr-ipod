@@ -13,7 +13,7 @@ import {CodeGenerator} from "./nodes/EmitterComponent";
 import {JsonStringifyComponent} from "./nodes/JsonStringifyComponent";
 import {TextFallbackComponent} from "./nodes/TextFallbackComponent";
 import { HexStringMangler } from "./nodes/transformers/ast/HexStringMangler";
-import { VariableMangler } from "./nodes/transformers/ast/VariableMangler";
+import { IdentifierMangleDictionary } from "./nodes/transformers/ast/IdentifierMangleDictionary";
 import { OneLineComponent } from "./nodes/transformers/text/OneLineComponent";
 
 export async function createEditor(container) {
@@ -25,7 +25,7 @@ export async function createEditor(container) {
         new JsonStringifyComponent(), // 4
         new TextFallbackComponent(),  // 5
         new HexStringMangler(),
-        new VariableMangler(),
+        new IdentifierMangleDictionary(),
         new OneLineComponent()
     ];
 

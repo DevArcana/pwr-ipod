@@ -2,12 +2,12 @@ import { Node } from "acorn";
 import { Transformers } from "../../../transformers/ast/ast";
 import { AbstractAstComponent } from "./AbstractAstComponent";
 
-export class HexStringMangler extends AbstractAstComponent {
+export class IdentifierMangleDictionary extends AbstractAstComponent {
   constructor() {
-    super("Hex string mangler");
+    super("Variable dictionary mangler");
   }
 
   transformation(node: Node): Node {
-    return Transformers.Ast.String.HexString.transform(node);
+    return Transformers.Ast.IdentifierMangle.Dictionary.transform(node);
   }
 }

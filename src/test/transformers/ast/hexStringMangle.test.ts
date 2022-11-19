@@ -1,7 +1,7 @@
 import { Parser } from "acorn";
 import { generate } from "astring";
 import { readdirSync, readFileSync } from "fs";
-import { astTransformHexString } from "../../../transformers/ast/hexString";
+import { Transformers } from "../../../transformers/ast/ast";
 
 const dir = "src/test/fixtures/samples/";
 
@@ -14,7 +14,7 @@ readdirSync(dir).forEach((fixture) => {
 
 const verifyAst = (contents: string) => {
   const ast = Parser.parse(contents, { ecmaVersion: 2020 });
-  const astMangled = astTransformHexString(ast);
+  const astMangled = Transformers.Ast.String.HexString.transform(ast);
   const output = generate(astMangled);
   expect(eval(output)).toEqual(eval(contents));
 };

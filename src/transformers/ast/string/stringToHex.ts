@@ -1,0 +1,48 @@
+import acorn from "acorn";
+import { full } from "acorn-walk";
+import AstTransfomer from "../astTransfomer";
+
+export default abstract class StringToHex extends AstTransfomer {
+  static transform(data: acorn.Node): acorn.Node {
+    full(data, (node: acorn.Node) => {
+      if (
+        this.isLiteral(node) &&
+        this.isStringLiteral(node as acornTypes.NodeLiteral)
+      ) {
+        node = this.nodeToHex(node as acornTypes.NodeLiteral);
+      }
+    });
+
+    return data;
+  }
+
+  private static isLiteral(node: acorn.Node): boolean {
+    return node.type === "Literal";
+  }
+
+  private static isStringLiteral(node: acornTypes.NodeLiteral): boolean {
+    return (
+      (node.raw[0] === '"' && node.raw[node.raw.length - 1] === '"') ||
+      (node.raw[0] === "'" && node.raw[node.raw.length - 1] === "'")
+    );
+  }
+
+  private static nodeToHex(node: acornTypes.NodeLiteral): acorn.Node {
+    node.value = this.stringToHex(node.value);
+    node.raw = `"${node.value}"`;
+    return node as acorn.Node;
+  }
+
+  private static stringToHex(str: string): string {
+    if (str === "") {
+      return "";
+    }
+
+    return str
+      .toString()
+      .split("")
+      .map((c) => c.charCodeAt(0).toString(16).padStart(2, "0"))
+      .map((c) => `\\x${c}`)
+      .join("");
+  }
+}
