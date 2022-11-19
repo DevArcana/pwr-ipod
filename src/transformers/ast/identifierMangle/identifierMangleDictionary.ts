@@ -1,8 +1,7 @@
 import { full, fullAncestor } from "acorn-walk";
-import AstTransfomer from "../astTransfomer";
 import StringGenerator from "../utils/stringGenerator";
 
-export default abstract class IdentifierMangleDictionary extends AstTransfomer {
+export default abstract class IdentifierMangleDictionary {
   static transform(data: acorn.Node): acorn.Node {
     data = this.removeVariableDeclarationIdentifiers(data);
     data = this.mangleVariableNames(data);

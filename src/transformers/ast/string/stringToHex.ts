@@ -1,8 +1,7 @@
 import acorn from "acorn";
 import { full } from "acorn-walk";
-import AstTransfomer from "../astTransfomer";
 
-export default abstract class StringToHex extends AstTransfomer {
+export default abstract class StringToHex {
   static transform(data: acorn.Node): acorn.Node {
     full(data, (node: acorn.Node) => {
       if (
