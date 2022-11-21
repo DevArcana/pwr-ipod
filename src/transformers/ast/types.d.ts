@@ -26,6 +26,7 @@ declare namespace acornTypes {
   export interface Literal extends Expression {
     type: "Literal";
     value: string | boolean | null | number | RegExp | bigint;
+    raw: string;
   }
 
   export interface BigIntLiteral extends Literal {
@@ -322,7 +323,7 @@ declare namespace acornTypes {
 
   export interface SequenceExpression extends Expression {
     type: "SequenceExpression";
-    expressions: E[xpression];
+    expressions: [Expression];
   }
 
   export interface Pattern extends Node {}

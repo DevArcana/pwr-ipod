@@ -2,12 +2,12 @@ import { Node } from "acorn";
 import { Transformers } from "../../../transformers/ast/ast";
 import { AbstractAstComponent } from "./AbstractAstComponent";
 
-export class IdentifierMangleDictionary extends AbstractAstComponent {
+export class PropertyToDict extends AbstractAstComponent {
   constructor() {
-    super("Dictionary mangler");
+    super("Property to dict");
   }
 
   transformation(node: Node): Node {
-    return Transformers.Ast.IdentifierMangle.Dictionary.transform(node);
+    return Transformers.Ast.Property.transform(node);
   }
 }

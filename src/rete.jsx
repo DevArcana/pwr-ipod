@@ -15,6 +15,7 @@ import {TextFallbackComponent} from "./nodes/TextFallbackComponent";
 import { HexStringMangler } from "./nodes/transformers/ast/HexStringMangler";
 import { IdentifierMangleDictionary } from "./nodes/transformers/ast/IdentifierMangleDictionary";
 import { OneLineComponent } from "./nodes/transformers/text/OneLineComponent";
+import { PropertyToDict } from "./nodes/transformers/ast/PropertyToDict";
 
 export async function createEditor(container) {
     const components = [
@@ -26,7 +27,8 @@ export async function createEditor(container) {
         new TextFallbackComponent(),  // 5
         new HexStringMangler(),
         new IdentifierMangleDictionary(),
-        new OneLineComponent()
+        new OneLineComponent(),
+        new PropertyToDict()
     ];
 
     const editor = new Rete.NodeEditor("demo@0.1.0", container);
@@ -51,21 +53,24 @@ export async function createEditor(container) {
     const hexStringMangler = await components[6].createNode();
     const variableMangler = await components[7].createNode();
     const oneLineComponent = await components[8].createNode();
+    const propertyDict = await components[9].createNode();
 
     input.position = [0, 0];
     parser.position = [250, 0];
-    hexStringMangler.position = [500, 0];
+    propertyDict.position = [500, 0];
     stringifyException.position = [500, 150];
     stringifyAst.position = [500, -150];
     variableMangler.position = [750, 0];
+    hexStringMangler.position = [1000, 0];
     oneLineComponent.position = [750, -150];
-    emitter.position = [1000, 0];
-    oneLineComponent.position = [1250, 0];
-    fallback.position = [1500, 0];
-    output.position = [1750, 0];
+    emitter.position = [1250, 0];
+    oneLineComponent.position = [1500, 0];
+    fallback.position = [1750, 0];
+    output.position = [2000, 0];
 
     editor.addNode(input);
     editor.addNode(parser);
+    editor.addNode(propertyDict);
     editor.addNode(emitter);
     editor.addNode(hexStringMangler);
     editor.addNode(stringifyException);
@@ -76,9 +81,10 @@ export async function createEditor(container) {
     editor.addNode(output);
 
     editor.connect(input.outputs.get("text"), parser.inputs.get("text"));
-    editor.connect(parser.outputs.get("ast"), hexStringMangler.inputs.get("ast"));
-    editor.connect(hexStringMangler.outputs.get("ast"), variableMangler.inputs.get("ast"));
-    editor.connect(variableMangler.outputs.get("ast"), emitter.inputs.get("ast"));
+    editor.connect(parser.outputs.get("ast"), propertyDict.inputs.get("ast"));
+    editor.connect(propertyDict.outputs.get("ast"), variableMangler.inputs.get("ast"));
+    editor.connect(variableMangler.outputs.get("ast"), hexStringMangler.inputs.get("ast"));
+    editor.connect(hexStringMangler.outputs.get("ast"), emitter.inputs.get("ast"));
     editor.connect(parser.outputs.get("ast"), stringifyAst.inputs.get("anything"));
     editor.connect(parser.outputs.get("exception"), stringifyException.inputs.get("anything"));
     editor.connect(emitter.outputs.get("text"), oneLineComponent.inputs.get("text"));

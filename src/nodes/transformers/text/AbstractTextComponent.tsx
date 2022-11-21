@@ -15,7 +15,6 @@ export abstract class AbstractTextComponent extends Rete.Component {
 
   // @ts-ignore
   worker(node: Node, inputs: WorkerInputs, outputs: WorkerOutputs) {
-    console.log(inputs);
     // @ts-ignore
     const input = inputs.text[0];
 
