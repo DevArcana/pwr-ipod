@@ -16,6 +16,8 @@ import { HexStringMangler } from "./nodes/transformers/ast/HexStringMangler";
 import { IdentifierMangleDictionary } from "./nodes/transformers/ast/IdentifierMangleDictionary";
 import { OneLineComponent } from "./nodes/transformers/text/OneLineComponent";
 import { PropertyToDict } from "./nodes/transformers/ast/PropertyToDict";
+import { GlobalStrings } from "./nodes/transformers/ast/GlobalStrings";
+import { TextToAstComponent } from "./nodes/TextToAstComponent";
 
 export async function createEditor(container) {
     const components = [
@@ -28,7 +30,9 @@ export async function createEditor(container) {
         new HexStringMangler(),
         new IdentifierMangleDictionary(),
         new OneLineComponent(),
-        new PropertyToDict()
+        new PropertyToDict(),
+        new GlobalStrings(),
+        new TextToAstComponent()
     ];
 
     const editor = new Rete.NodeEditor("demo@0.1.0", container);

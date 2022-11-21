@@ -1,4 +1,5 @@
 import { full, fullAncestor } from "acorn-walk";
+import { NodeTypes } from "../nodeTypes";
 import StringGenerator from "../utils/stringGenerator";
 
 export default abstract class IdentifierMangleDictionary {
@@ -14,9 +15,9 @@ export default abstract class IdentifierMangleDictionary {
     fullAncestor(data, (node: acorn.Node, ancestors: acorn.Node[]) => {
       if (
         ancestors.length > 1 &&
-        ancestors[ancestors.length - 2].type !== "property"
+        ancestors[ancestors.length - 2].type !== NodeTypes.Property
       ) {
-        if (node.type === "VariableDeclaration") {
+        if (node.type === NodeTypes.VariableDeclaration) {
           // exclude 'const {a} = params' case
           //@ts-ignore
           if (
@@ -25,7 +26,7 @@ export default abstract class IdentifierMangleDictionary {
               //@ts-ignore
               (declaration: acorn.Node) =>
                 //@ts-ignore
-                declaration.id.type === "ObjectPattern"
+                declaration.id.type === NodeTypes.ObjectPattern
             ).length === 0
           ) {
             //@ts-ignore
@@ -41,8 +42,9 @@ export default abstract class IdentifierMangleDictionary {
   private static mangleVariableNames(data: acorn.Node) {
     const varsLookup: { [key: string]: string[] } = {};
 
+    //search for declarations
     full(data, (node: acorn.Node) => {
-      if (node.type === "VariableDeclarator") {
+      if (node.type === NodeTypes.VariableDeclarator) {
         const generated = `vars["${StringGenerator.next()}"]`;
 
         // @ts-ignore
@@ -59,16 +61,18 @@ export default abstract class IdentifierMangleDictionary {
       }
     });
 
+    // change vars using lookup
     fullAncestor(data, (node: acorn.Node, ancestors: acorn.Node[]) => {
       if (
         ancestors.length !== 1 &&
         // do not replace arrow function arguments
-        ancestors[ancestors.length - 2].type !== "ArrowFunctionExpression" &&
+        ancestors[ancestors.length - 2].type !==
+          NodeTypes.ArrowFunctionExpression &&
         // do not replace object deconstruction
-        ancestors[ancestors.length - 2].type !== "ObjectPattern"
+        ancestors[ancestors.length - 2].type !== NodeTypes.ObjectPattern
       ) {
         // @ts-ignore
-        if (node.type === "Identifier" && node.name in varsLookup) {
+        if (node.type === NodeTypes.Identifier && node.name in varsLookup) {
           // @ts-ignore
           if (varsLookup[node.name].length > 1) {
             // @ts-ignore
@@ -82,8 +86,8 @@ export default abstract class IdentifierMangleDictionary {
 
       if (
         ancestors.length !== 1 &&
-        ancestors[ancestors.length - 2].type === "ObjectExpression" &&
-        node.type === "Property"
+        ancestors[ancestors.length - 2].type === NodeTypes.ObjectExpression &&
+        node.type === NodeTypes.Property
       ) {
         // @ts-ignore
         node.shorthand = false;

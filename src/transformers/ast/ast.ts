@@ -1,5 +1,6 @@
 import IdentifierMangleDictionary from "./identifierMangle/identifierMangleDictionary";
 import PropertyDict from "./property/propertyDict";
+import GlobalStrings from "./string/globalStrings";
 import StringToHex from "./string/stringToHex";
 
 export namespace Transformers {
@@ -10,6 +11,7 @@ export namespace Transformers {
 
     export namespace String {
       export const HexString = StringToHex;
+      export const Global = GlobalStrings;
     }
 
     export const Property = PropertyDict;
