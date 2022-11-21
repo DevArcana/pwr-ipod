@@ -3,8 +3,7 @@ export default class StringGenerator {
   // https://stackoverflow.com/a/1349426
   private static makeid(length: number) {
     var result = "";
-    var characters =
-      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    var characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_";
     var charactersLength = characters.length;
     for (var i = 0; i < length; i++) {
       result += characters.charAt(Math.floor(Math.random() * charactersLength));
@@ -13,6 +12,6 @@ export default class StringGenerator {
   }
 
   static next(): string {
-    return this.makeid(12);
+    return this.makeid(15);
   }
 }

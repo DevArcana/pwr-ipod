@@ -30,7 +30,7 @@ export default abstract class GlobalStrings {
           // @ts-ignore
           value: lookup[node.value],
           // @ts-ignore
-          raw: `\"${lookup[node.value]}\"`,
+          raw: `"${lookup[node.value]}"`,
         };
 
         // @ts-ignore
@@ -84,14 +84,14 @@ export default abstract class GlobalStrings {
             start: 1,
             end: 2,
             value: lookup[key],
-            raw: `\"${lookup[key]}\"`,
+            raw: `"${lookup[key]}"`,
           },
           value: {
             type: NodeTypes.Literal,
             start: 1,
             end: 2,
             value: key,
-            raw: `\"${key}\"`,
+            raw: `"${key}"`,
           },
           kind: "init",
         });

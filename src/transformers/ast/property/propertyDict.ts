@@ -14,7 +14,7 @@ export default abstract class PropertyDict {
         exp.property.type = "Literal";
 
         (exp.property as acornTypes.Literal).value = name;
-        (exp.property as acornTypes.Literal).raw = `\"${name}\"`;
+        (exp.property as acornTypes.Literal).raw = `"${name}"`;
 
         exp.computed = true;
       }

@@ -56,8 +56,8 @@ export async function createEditor(container) {
     const fallback = await components[5].createNode();
     const hexStringMangler = await components[6].createNode();
     const variableMangler = await components[7].createNode();
-    const oneLineComponent = await components[8].createNode();
     const propertyDict = await components[9].createNode();
+    const globalStrings = await components[10].createNode();
 
     input.position = [0, 0];
     parser.position = [250, 0];
@@ -66,21 +66,20 @@ export async function createEditor(container) {
     stringifyAst.position = [500, -150];
     variableMangler.position = [750, 0];
     hexStringMangler.position = [1000, 0];
-    oneLineComponent.position = [750, -150];
-    emitter.position = [1250, 0];
-    oneLineComponent.position = [1500, 0];
-    fallback.position = [1750, 0];
-    output.position = [2000, 0];
+    globalStrings.position = [1250, 0];
+    emitter.position = [1500, 0];
+    fallback.position = [2000, 0];
+    output.position = [2250, 0];
 
     editor.addNode(input);
     editor.addNode(parser);
     editor.addNode(propertyDict);
     editor.addNode(emitter);
     editor.addNode(hexStringMangler);
+    editor.addNode(globalStrings);
     editor.addNode(stringifyException);
     editor.addNode(stringifyAst);
     editor.addNode(variableMangler);
-    editor.addNode(oneLineComponent);
     editor.addNode(fallback);
     editor.addNode(output);
 
@@ -88,11 +87,11 @@ export async function createEditor(container) {
     editor.connect(parser.outputs.get("ast"), propertyDict.inputs.get("ast"));
     editor.connect(propertyDict.outputs.get("ast"), variableMangler.inputs.get("ast"));
     editor.connect(variableMangler.outputs.get("ast"), hexStringMangler.inputs.get("ast"));
-    editor.connect(hexStringMangler.outputs.get("ast"), emitter.inputs.get("ast"));
+    editor.connect(hexStringMangler.outputs.get("ast"), globalStrings.inputs.get("ast"));
+    editor.connect(globalStrings.outputs.get("ast"), emitter.inputs.get("ast"));
     editor.connect(parser.outputs.get("ast"), stringifyAst.inputs.get("anything"));
     editor.connect(parser.outputs.get("exception"), stringifyException.inputs.get("anything"));
-    editor.connect(emitter.outputs.get("text"), oneLineComponent.inputs.get("text"));
-    editor.connect(oneLineComponent.outputs.get("text"), fallback.inputs.get("text1"));
+    editor.connect(emitter.outputs.get("text"), fallback.inputs.get("text1"));
     editor.connect(stringifyException.outputs.get("text"), fallback.inputs.get("text2"));
     editor.connect(fallback.outputs.get("text"), output.inputs.get("text"));
 
