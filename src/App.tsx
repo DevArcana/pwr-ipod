@@ -8,13 +8,13 @@ import { useEditorOutput } from "./global/useEditorOutput";
 import { useRete } from "./rete";
 
 function App() {
-  const [setContainer] = useRete();
+  const [ setContainer ] = useRete();
 
   const { setEditorInput, onEditorInputChange } = useEditorInput();
   const { onEditorOutputChange } = useEditorOutput();
 
-  const [input, setInput] = useState("");
-  const [output, setOutput] = useState("");
+  const [ input, setInput ] = useState("");
+  const [ output, setOutput ] = useState("");
 
   useEffect(() => {
     onEditorInputChange((editorInput) => {
@@ -24,12 +24,8 @@ function App() {
     onEditorOutputChange((editorOutput) => {
       setOutput(editorOutput);
     });
-  }, []);
 
-  useEffect(() => {
-    const input = initializeInput();
-    setInput(input);
-    setEditorInput(input);
+    setEditorInput(initial_code);
   }, []);
 
   const onChange = React.useCallback((value: string) => {
@@ -43,7 +39,7 @@ function App() {
         value={input}
         height="100%"
         width="100%"
-        extensions={[javascript({ jsx: false })]}
+        extensions={[ javascript({ jsx: false }) ]}
         onChange={onChange}
       />
       <CodeMirror
@@ -52,7 +48,7 @@ function App() {
         value={output}
         height="100%"
         width="100%"
-        extensions={[javascript({ jsx: false })]}
+        extensions={[ javascript({ jsx: false }) ]}
         basicSetup={{
           highlightActiveLine: false,
           highlightActiveLineGutter: false,
@@ -70,8 +66,7 @@ function App() {
   );
 }
 
-function initializeInput(): string {
-  return `
+const initial_code = `
   /*
 https://github.com/trekhleb/javascript-algorithms
 */
@@ -145,6 +140,5 @@ caesarCipherDecrypt(
 ).toLowerCase() === sampleText.toLowerCase();
 
   `;
-}
 
 export default App;
