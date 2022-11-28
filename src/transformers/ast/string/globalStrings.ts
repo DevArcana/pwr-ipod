@@ -5,6 +5,7 @@ import StringGenerator from "../utils/stringGenerator";
 
 export default abstract class GlobalStrings {
   static transform(data: acorn.Node): acorn.Node {
+    data = JSON.parse(JSON.stringify(data));
     const lookup: { [key: string]: string } = {};
     const lookupName = StringGenerator.next();
 

@@ -19,7 +19,7 @@ export abstract class AbstractAstComponent extends Rete.Component {
     const input = inputs.ast[0];
 
     if (input) {
-      outputs["ast"] = this.transformation(input as acorn.Node);
+      outputs["ast"] = this.transformation(JSON.parse(JSON.stringify(input)) as acorn.Node);
     }
   }
 
