@@ -1,8 +1,7 @@
-import Rete, { Node } from "rete";
-import { astSocket, exceptionSocket, textSocket } from "../sockets";
-import { WorkerInputs, WorkerOutputs } from "rete/types/core/data";
 import { Parser } from "acorn";
-import { Simulate } from "react-dom/test-utils";
+import Rete, { Node } from "rete";
+import { WorkerInputs, WorkerOutputs } from "rete/types/core/data";
+import { astSocket, exceptionSocket, textSocket } from "../sockets";
 
 export class ParserComponent extends Rete.Component {
   constructor() {

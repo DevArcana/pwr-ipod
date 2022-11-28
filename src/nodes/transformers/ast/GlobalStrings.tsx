@@ -27,11 +27,6 @@ export class GlobalStrings extends Rete.Component {
     // @ts-ignore
     const folds = inputs.folds.length ? inputs.folds[0] : node.data.folds;
 
-    if (folds <= 0) {
-      console.log(folds);
-      console.error("Incorrect folds value");
-    }
-
     if (input) {
       for (var i = 0; i < folds; ++i) {
         input = this.transformation(input as acorn.Node);
