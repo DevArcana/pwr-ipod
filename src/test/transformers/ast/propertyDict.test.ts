@@ -6,7 +6,7 @@ import { Transformers } from "../../../transformers/ast/ast";
 const dir = "src/test/fixtures/samples/";
 
 readdirSync(dir).forEach((fixture) => {
-  test("hexStringMangle for: " + fixture, () => {
+  test.only("propertyToDict for: " + fixture, () => {
     const contents = readFileSync(dir + fixture).toString();
     verifyAst(contents);
   });
@@ -14,7 +14,7 @@ readdirSync(dir).forEach((fixture) => {
 
 const verifyAst = (contents: string) => {
   const ast = Parser.parse(contents, { ecmaVersion: 2020 });
-  const astMangled = Transformers.Ast.String.HexString.transform(ast);
+  const astMangled = Transformers.Ast.Property.transform(ast);
   const output = generate(astMangled);
   expect(eval(output)).toEqual(eval(contents));
 };

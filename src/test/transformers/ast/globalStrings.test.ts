@@ -4,17 +4,21 @@ import { readdirSync, readFileSync } from "fs";
 import { Transformers } from "../../../transformers/ast/ast";
 
 const dir = "src/test/fixtures/samples/";
+const folds = 10;
 
 readdirSync(dir).forEach((fixture) => {
-  test("hexStringMangle for: " + fixture, () => {
+  test(`globalStrings ${folds} folds for: ` + fixture, () => {
     const contents = readFileSync(dir + fixture).toString();
     verifyAst(contents);
   });
 });
 
 const verifyAst = (contents: string) => {
-  const ast = Parser.parse(contents, { ecmaVersion: 2020 });
-  const astMangled = Transformers.Ast.String.HexString.transform(ast);
-  const output = generate(astMangled);
+  let ast = Parser.parse(contents, { ecmaVersion: 2020 });
+  for (var i = 0; i < folds; ++i) {
+    ast = Transformers.Ast.String.Global.transform(ast);
+  }
+
+  const output = generate(ast);
   expect(eval(output)).toEqual(eval(contents));
 };

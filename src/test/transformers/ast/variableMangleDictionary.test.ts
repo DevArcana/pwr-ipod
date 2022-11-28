@@ -1,8 +1,7 @@
 import { Parser } from "acorn";
 import { generate } from "astring";
 import { readFileSync } from "fs";
-import { astTransformIdentity } from "../../../transformers/ast/identity";
-import { astTransformVariableMangle } from "../../../transformers/ast/variableMangle";
+import { Transformers } from "../../../transformers/ast/ast";
 import { outputTransformIdentity } from "../../../transformers/text/identity";
 
 const basePath = "src/test/fixtures/samples";
@@ -20,7 +19,7 @@ fixtures.forEach((fixture) => {
   });
 });
 
-test("ArrowFuncitonObjectDeconstructionBug", () => {
+test("ArrowFunctionObjectDeconstructionBug", () => {
   const contents = "const a = 1;1 === ({a}).a ";
   verifyAst(contents);
 });
@@ -31,9 +30,17 @@ test.skip("ObjectDeconstructionDiscardedQualifierBug", () => {
   verifyAst(contents);
 });
 
+// TODO fix this
+test.skip("GlobalAndLocalMangling", () => {
+  const contents =
+    "const a = 1; function b() {const a = 2; return a;} a === 1 && b() === 2";
+  verifyAst(contents);
+});
+
 const verifyAst = (contents: string) => {
   const ast = Parser.parse(contents, { ecmaVersion: 2020 });
-  const astMangled = astTransformVariableMangle(astTransformIdentity(ast));
+  const astMangled =
+    Transformers.Ast.IdentifierMangle.Dictionary.transform(ast);
   const output = outputTransformIdentity(generate(astMangled));
   expect(eval(output)).toEqual(eval(contents));
 };
