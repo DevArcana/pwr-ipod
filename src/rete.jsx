@@ -18,6 +18,7 @@ import { OneLineComponent } from "./nodes/transformers/text/OneLineComponent";
 import { PropertyToDict } from "./nodes/transformers/ast/PropertyToDict";
 import { GlobalStrings } from "./nodes/transformers/ast/GlobalStrings";
 import { TextToAstComponent } from "./nodes/TextToAstComponent";
+import {ReverseIdentifierMangleDictionary} from "./nodes/transformers/ast/ReverseIdentifierMangleDictionary";
 
 export async function createEditor(container) {
     const components = [
@@ -32,7 +33,8 @@ export async function createEditor(container) {
         new OneLineComponent(),
         new PropertyToDict(),
         new GlobalStrings(),
-        new TextToAstComponent()
+        new TextToAstComponent(),
+        new ReverseIdentifierMangleDictionary()
     ];
 
     const editor = new Rete.NodeEditor("demo@0.1.0", container);
