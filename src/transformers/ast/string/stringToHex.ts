@@ -15,6 +15,19 @@ export default abstract class StringToHex {
     return data;
   }
 
+  static reverse(data: acorn.Node): acorn.Node {
+    full(data, (node: acorn.Node) => {
+      if (
+        this.isLiteral(node) &&
+        this.isStringLiteral(node as acornTypes.NodeLiteral)
+      ) {
+        node = this.nodeFromHex(node as acornTypes.NodeLiteral);
+      }
+    });
+
+    return data;
+  }
+
   private static isLiteral(node: acorn.Node): boolean {
     return node.type === "Literal";
   }
@@ -43,5 +56,22 @@ export default abstract class StringToHex {
       .map((c) => c.charCodeAt(0).toString(16).padStart(2, "0"))
       .map((c) => `\\x${c}`)
       .join("");
+  }
+
+  private static nodeFromHex(node: acornTypes.NodeLiteral): acorn.Node {
+    node.value = this.hexToString(node.value);
+    node.raw = `"${node.value}"`;
+    return node as acorn.Node;
+  }
+
+  private static hexToString(str: string): string {
+    if (str === "") {
+      return "";
+    }
+
+    const matchAllHexGroups = /(\\x[a-fA-F0-9]{2})/g;
+    return str.replace(matchAllHexGroups, (hexSubstring) =>
+      String.fromCharCode(parseInt(hexSubstring.slice(2), 16))
+    );
   }
 }

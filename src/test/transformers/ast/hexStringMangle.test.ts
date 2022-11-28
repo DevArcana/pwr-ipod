@@ -14,7 +14,12 @@ readdirSync(dir).forEach((fixture) => {
 
 const verifyAst = (contents: string) => {
   const ast = Parser.parse(contents, { ecmaVersion: 2020 });
+
   const astMangled = Transformers.Ast.String.HexString.transform(ast);
   const output = generate(astMangled);
   expect(eval(output)).toEqual(eval(contents));
+
+  const astUnmangled = Transformers.Ast.String.HexString.reverse(astMangled);
+  const unmangled = generate(astUnmangled);
+  expect(eval(unmangled)).toEqual(eval(contents));
 };
