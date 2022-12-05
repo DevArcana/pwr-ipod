@@ -12,14 +12,14 @@ import {ParserComponent} from "./nodes/ParserComponent";
 import {CodeGenerator} from "./nodes/EmitterComponent";
 import {JsonStringifyComponent} from "./nodes/JsonStringifyComponent";
 import {TextFallbackComponent} from "./nodes/TextFallbackComponent";
-import { HexStringMangler } from "./nodes/transformers/ast/HexStringMangler";
-import { IdentifierMangleDictionary } from "./nodes/transformers/ast/IdentifierMangleDictionary";
-import { OneLineComponent } from "./nodes/transformers/text/OneLineComponent";
-import { PropertyToDict } from "./nodes/transformers/ast/PropertyToDict";
-import { GlobalStrings } from "./nodes/transformers/ast/GlobalStrings";
-import { TextToAstComponent } from "./nodes/TextToAstComponent";
+import {HexStringMangler} from "./nodes/transformers/ast/HexStringMangler";
+import {IdentifierMangleDictionary} from "./nodes/transformers/ast/IdentifierMangleDictionary";
+import {OneLineComponent} from "./nodes/transformers/text/OneLineComponent";
+import {PropertyToDict} from "./nodes/transformers/ast/PropertyToDict";
+import {GlobalStrings} from "./nodes/transformers/ast/GlobalStrings";
+import {TextToAstComponent} from "./nodes/TextToAstComponent";
 import {ReverseIdentifierMangleDictionary} from "./nodes/transformers/ast/ReverseIdentifierMangleDictionary";
-import { ReverseHexStringMangler } from "./nodes/transformers/ast/ReverseHexStringMangler";
+import {ReverseHexStringMangler} from "./nodes/transformers/ast/ReverseHexStringMangler";
 import {ReversePropertyToDict} from "./nodes/transformers/ast/ReversePropertyToDict";
 
 export async function createEditor(container) {
@@ -119,6 +119,7 @@ export async function createEditor(container) {
 
 export function useRete() {
     const [container, setContainer] = useState(null);
+    const [callbacks, setCallbacks] = useState([])
     const editorRef = useRef();
 
     useEffect(() => {
@@ -137,5 +138,42 @@ export function useRete() {
         };
     }, []);
 
-    return [setContainer];
+    const savePipeline = (name) => {
+        const json = editorRef.current.toJSON();
+        localStorage.setItem(`pipeline:${name}`, JSON.stringify(json))
+
+        if (localStorage.getItem("pipelines")) {
+            const names = JSON.parse(localStorage.getItem("pipelines"))
+            if (!names.find(x => x == name)) {
+                localStorage.setItem("pipelines", JSON.stringify([...names, name]))
+            }
+        } else {
+            localStorage.setItem("pipelines", JSON.stringify([name]))
+        }
+
+        callbacks.forEach(cb => cb())
+    }
+
+    const onRefresh = (cb) => {
+        setCallbacks([...callbacks, cb])
+    }
+
+    const getPipelines = () => {
+        const names = localStorage.getItem("pipelines")
+        console.log(names)
+        if (names) {
+            return JSON.parse(names)
+        }
+        return []
+    }
+
+    const loadPipeline = (name) => {
+        const pipeline = localStorage.getItem(`pipeline:${name}`)
+        console.log(pipeline)
+        if (pipeline) {
+            editorRef.current.fromJSON(JSON.parse(pipeline))
+        }
+    }
+
+    return [setContainer, savePipeline, onRefresh, getPipelines, loadPipeline];
 }

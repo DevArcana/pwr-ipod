@@ -1,5 +1,5 @@
 import CodeMirror from "@uiw/react-codemirror";
-import React, { useEffect, useState } from "react";
+import React, { ChangeEvent, useEffect, useRef, useState } from "react";
 // @ts-ignore
 import { javascript } from "@codemirror/lang-javascript";
 import "./App.css";
@@ -8,13 +8,16 @@ import { useEditorOutput } from "./global/useEditorOutput";
 import { useRete } from "./rete";
 
 function App() {
-  const [ setContainer ] = useRete();
+  const [ setContainer, savePipeline, onRefresh, getPipelines, loadPipeline ] = useRete();
 
   const { setEditorInput, onEditorInputChange } = useEditorInput();
   const { onEditorOutputChange } = useEditorOutput();
 
   const [ input, setInput ] = useState("");
   const [ output, setOutput ] = useState("");
+
+  const [ pipeline, setPipeline ] = useState("");
+  const [ pipelines, setPipelines ] = useState([]);
 
   useEffect(() => {
     onEditorInputChange((editorInput) => {
@@ -26,14 +29,53 @@ function App() {
     });
 
     setEditorInput(initial_code);
+
+    // @ts-ignore
+    setPipelines(getPipelines());
+
+    // @ts-ignore
+    onRefresh(() => {
+      console.log("adasdsadas");
+      // @ts-ignore
+      setPipelines(getPipelines());
+    });
+
   }, []);
 
   const onChange = React.useCallback((value: string) => {
     setEditorInput(value);
   }, []);
 
+  const handlePipelineSelection = (e: ChangeEvent<HTMLSelectElement>) => {
+    const selected = e.target.value;
+    setPipeline(selected);
+    // @ts-ignore
+    loadPipeline(selected);
+  };
+
+  const handlePipelineChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setPipeline(e.target.value);
+  };
+
+  const handleSavingPipeline = () => {
+    if (!pipeline) {
+      return;
+    }
+    // @ts-ignore
+    savePipeline(pipeline);
+  };
+
   return (
     <main className="main">
+      <nav
+        className="nav">
+        <select value={pipeline} onChange={handlePipelineSelection}>
+          <option></option>
+          {pipelines.map(pipeline => <option value={pipeline}>{pipeline}</option>)}
+        </select>
+        <input id="saveAs" name="saveAs" type="text" value={pipeline} onChange={handlePipelineChange}/>
+        <button onClick={handleSavingPipeline}>Save</button>
+      </nav>
       <CodeMirror
         className="textarea"
         value={input}
