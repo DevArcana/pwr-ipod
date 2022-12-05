@@ -20,6 +20,7 @@ import { GlobalStrings } from "./nodes/transformers/ast/GlobalStrings";
 import { TextToAstComponent } from "./nodes/TextToAstComponent";
 import {ReverseIdentifierMangleDictionary} from "./nodes/transformers/ast/ReverseIdentifierMangleDictionary";
 import { ReverseHexStringMangler } from "./nodes/transformers/ast/ReverseHexStringMangler";
+import {ReversePropertyToDict} from "./nodes/transformers/ast/ReversePropertyToDict";
 
 export async function createEditor(container) {
     const components = [
@@ -36,10 +37,12 @@ export async function createEditor(container) {
         new GlobalStrings(),
         new TextToAstComponent(),
         new ReverseIdentifierMangleDictionary(),
-        new ReverseHexStringMangler()
+        new ReverseHexStringMangler(),
+        new ReversePropertyToDict()
     ];
 
     const editor = new Rete.NodeEditor("demo@0.1.0", container);
+
     editor.use(ConnectionPlugin);
     editor.use(ReactRenderPlugin, {createRoot});
     editor.use(Context);
