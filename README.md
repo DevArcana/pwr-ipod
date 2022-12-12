@@ -2,7 +2,7 @@
 
 ## Temat
 
-Obfuskator i detektor obfuskacji kodu źródłowego programów
+Obfuskator i deobfuskator kodu źródłowego programów
 napisanych w języku JavaScript
 
 ## Instrukcja użycia
