@@ -5,7 +5,6 @@ import StringGenerator from "../utils/stringGenerator";
 
 export default abstract class GlobalStrings {
   static transform(data: acorn.Node): acorn.Node {
-    data = JSON.parse(JSON.stringify(data));
     const lookup: { [key: string]: string } = {};
     const lookupName = StringGenerator.next();
 
@@ -51,14 +50,76 @@ export default abstract class GlobalStrings {
     return data;
   }
 
+  static reverse(data: acorn.Node): acorn.Node {
+    const dictionaries: { [name: string]: { [key: string]: string } } = {};
+
+    // cache all dictionaries
+    full(data, (node: acorn.Node) => {
+      if (node.type === NodeTypes.VariableDeclaration) {
+        // @ts-ignore
+        if (node.declarations != undefined && node.declarations.length > 0) {
+          // @ts-ignore
+          const declaration = node.declarations[0];
+          if (declaration.type == "VariableDeclarator" && declaration.init.type == "ObjectExpression") {
+            const dictionary: { [key: string]: string } = {};
+            declaration.init.properties.forEach((prop: acornTypes.Property) => {
+              if (prop.type != "Property") return;
+              // @ts-ignore
+              const key = prop.key["value"];
+              // @ts-ignore
+              const value = prop.value["value"];
+              dictionary[key] = value;
+            });
+
+            if (Object.keys(dictionary).length > 0) {
+              dictionaries[declaration.id.name] = dictionary;
+            }
+          }
+        }
+      }
+    });
+
+    full(data, (node: acorn.Node) => {
+      if (node.type === NodeTypes.MemberExpression) {
+        // @ts-ignore
+        if (node.object.type != "Identifier") {
+          return;
+        }
+
+        // @ts-ignore
+        const name = node.object.name;
+        // @ts-ignore
+        const value = node.property.value;
+
+        if (!(name in dictionaries)) {
+          return;
+        }
+
+        // @ts-ignore
+        node["computed"] = false;
+        node.type = "Literal";
+        // @ts-ignore
+        node.value = dictionaries[name][value];
+
+        // @ts-ignore
+        if (node.value == undefined) {
+          console.log(node)
+          console.log(name + " : " + value)
+          console.log(dictionaries[name])
+        }
+      }
+    });
+    return data;
+  }
+
   private static insertLookup(
     data: acorn.Node,
     lookup: { [key: string]: string },
-    lookupName: string
+    lookupName: string,
   ) {
     const properties = this.lookupToString(lookup);
     const node = JSON.parse(
-      `{"type":"VariableDeclaration","start":0,"end":13,"declarations":[{"type":"VariableDeclarator","start":4,"end":13,"id":{"type":"Identifier","start":4,"end":8,"name":"${lookupName}"},"init":{"type":"ObjectExpression","start":11,"end":13,"properties":${properties}}}],"kind":"let"}`
+      `{"type":"VariableDeclaration","start":0,"end":13,"declarations":[{"type":"VariableDeclarator","start":4,"end":13,"id":{"type":"Identifier","start":4,"end":8,"name":"${lookupName}"},"init":{"type":"ObjectExpression","start":11,"end":13,"properties":${properties}}}],"kind":"let"}`,
     );
 
     // when trying simply 'data.body.unshift({});'

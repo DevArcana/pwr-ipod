@@ -30,7 +30,7 @@ export default abstract class PropertyDict {
 
         exp.property.type = "Identifier";
         // @ts-ignore
-        exp.property["name"] = (exp.property as acornTypes.Literal).value
+        exp.property["name"] = (exp.property as acornTypes.Literal).value;
 
         exp.computed = false;
       }
