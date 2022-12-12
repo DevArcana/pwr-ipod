@@ -37,7 +37,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "pdf": "md-to-pdf *.md"
+    "pdf": "md-to-pdf reports/*.md"
   },
   "eslintConfig": {
     "extends": [
