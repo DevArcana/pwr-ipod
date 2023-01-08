@@ -109,6 +109,10 @@ export default abstract class GlobalStrings {
         }
       }
     });
+
+    // @ts-ignore
+    data.body.shift();
+    
     return data;
   }
 
