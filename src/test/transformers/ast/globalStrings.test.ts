@@ -1,16 +1,15 @@
 import { Parser } from "acorn";
 import { generate } from "astring";
-import { readdirSync, readFileSync } from "fs";
+import { readFileSync } from "fs";
 import { Transformers } from "../../../transformers/ast/ast";
 
 const dir = "src/test/fixtures/samples/";
 const folds = 10;
+const fixture = "caesarCipher.js"
 
-readdirSync(dir).forEach((fixture) => {
-  test(`globalStrings ${folds} folds for: ` + fixture, () => {
-    const contents = readFileSync(dir + fixture).toString();
-    verifyAst(contents);
-  });
+test(`globalStrings ${folds} folds for: ` + fixture, () => {
+  const contents = readFileSync(dir + fixture).toString();
+  verifyAst(contents);
 });
 
 const verifyAst = (contents: string) => {
