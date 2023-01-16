@@ -13,3 +13,10 @@ Omówiliśmy z prowadzącym techniki zebrane z przeglądu literatury i wybraliś
 - hexadecimal string mangler
 - global strings exctration
 - whitespace removal
+
+## Literatura
+
+### Control flow flattening
+
+https://github.com/javascript-obfuscator/javascript-obfuscator/issues/21
+https://github.com/obfuscator-llvm/obfuscator/wiki/Control-Flow-Flattening#implemented-technique
